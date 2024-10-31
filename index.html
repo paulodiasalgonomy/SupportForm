@@ -1,151 +1,196 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Dinâmico</title>
+    <title>Support Form</title>
     <style>
-        /* Reset básico */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
         body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: #f3f4f6;
-            color: #333;
+            min-height: 100vh;
+            margin: 0;
         }
-        .container {
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 600px;
-            padding: 2rem;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
         }
         h2 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            text-align: center;
+            color: #333;
         }
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 15px;
         }
         label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
         }
-        input, select, button {
+        input, select, textarea, button {
             width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px 0;
             border-radius: 5px;
-            font-size: 1rem;
+            border: 1px solid #ddd;
         }
         button {
             background-color: #4CAF50;
-            color: #fff;
+            color: white;
             cursor: pointer;
+            border: none;
         }
         button:hover {
             background-color: #45a049;
         }
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Formulário de Solicitação</h2>
-        <div id="formStep1" class="form-step">
+
+<div class="form-container">
+    <h2>Support Request Form</h2>
+    <form id="supportForm" onsubmit="submitForm(event)">
+        <div id="page1" class="form-page">
             <div class="form-group">
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required>
+                <label for="name">Name</label>
+                <input type="text" id="name" required>
             </div>
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
             </div>
             <div class="form-group">
-                <label for="site">Site:</label>
-                <input type="text" id="site" name="site" required>
+                <label for="website">Website</label>
+                <input type="url" id="website" required>
             </div>
             <div class="form-group">
-                <label for="siteID">Site ID:</label>
-                <input type="text" id="siteID" name="siteID" required>
+                <label for="siteId">Site ID</label>
+                <input type="text" id="siteId" required>
             </div>
-            <button onclick="nextForm(2)">Próxima Página</button>
+            <button type="button" onclick="nextPage()">Next</button>
         </div>
 
-        <div id="formStep2" class="form-step hidden">
+        <div id="page2" class="form-page" style="display: none;">
             <div class="form-group">
-                <label for="necessidade">O que você precisa?</label>
-                <select id="necessidade" name="necessidade" onchange="showNextForm()">
-                    <option value="">Selecione uma opção</option>
-                    <option value="producao">Ajuda com problema em ambiente de produção</option>
-                    <option value="dashboard">Ajuda com regras do dashboard</option>
-                    <option value="feature">Solicitação de nova Feature</option>
-                    <option value="acesso">Ajuda com acesso de usuário</option>
+                <label for="assistance">What do you need assistance with?</label>
+                <select id="assistance" onchange="showAdditionalForm()" required>
+                    <option value="">Select...</option>
+                    <option value="production">Help with production environment issue</option>
+                    <option value="dashboard">Help with dashboard rules</option>
+                    <option value="new_tool">New tool request</option>
+                    <option value="user_access">Help with user access</option>
                 </select>
             </div>
+            <div id="additionalForm" style="display: none;"></div>
+            <button type="submit">Submit</button>
         </div>
+    </form>
+</div>
 
-        <div id="formProducao" class="form-step hidden">
-            <div class="form-group">
-                <label for="ferramenta">Qual Ferramenta está apresentando problemas?</label>
-                <select id="ferramenta" name="ferramenta">
-                    <option value="streaming">Streaming API</option>
-                    <option value="find">Find</option>
-                    <option value="recsForPlacements">RecsForPlacements</option>
-                    <option value="engage">Engage</option>
-                </select>
-            </div>
-        </div>
+<script>
+    let formData = {};
 
-        <div id="formDashboard" class="form-step hidden">
-            <div class="form-group">
-                <label for="solucao">Qual solução?</label>
-                <select id="solucao" name="solucao">
-                    <option value="engage">Engage</option>
-                    <option value="recommend">Recommend</option>
-                    <option value="find">Find</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="regra">Qual Regra que não está Funcionando?</label>
-                <input type="text" id="regra" name="regra">
-            </div>
-            <div class="form-group">
-                <label for="produtos">Qual/quais produtos/banners deveriam retornar (informe o product ID ou ContentID ou link):</label>
-                <input type="text" id="produtos" name="produtos">
-            </div>
-        </div>
-    </div>
+    function nextPage() {
+        formData.name = document.getElementById('name').value;
+        formData.email = document.getElementById('email').value;
+        formData.website = document.getElementById('website').value;
+        formData.siteId = document.getElementById('siteId').value;
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'block';
+    }
 
-    <script>
-        function nextForm(step) {
-            document.getElementById("formStep1").classList.add("hidden");
-            document.getElementById("formStep" + step).classList.remove("hidden");
+    function showAdditionalForm() {
+        const assistance = document.getElementById('assistance').value;
+        formData.assistance = assistance;
+        let additionalFormHTML = '';
+
+        if (assistance === 'production') {
+            additionalFormHTML = `
+                <div class="form-group">
+                    <label>Which tool is having issues?</label>
+                    <select id="tool" required>
+                        <option value="streaming_api">Streaming API</option>
+                        <option value="find">Find</option>
+                        <option value="recsForPlacements">RecsForPlacements</option>
+                        <option value="engage">Engage</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>This solution:</label>
+                    <select id="solution_issue" required>
+                        <option value="100_errors">Returns 100% errors</option>
+                        <option value="specific_case">Shows error in a specific case</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Send us the following information:</label>
+                    <textarea id="example_request" placeholder="Example request"></textarea>
+                    <input type="file" id="screenshot">
+                </div>
+                <div id="streamingForm" style="display: none;">
+                    <div class="form-group">
+                        <label>Is the issue related to INGEST? If yes, add the tracking ID.</label>
+                        <input type="text" id="tracking_id">
+                    </div>
+                    <div class="form-group">
+                        <label>Is the issue related to connection? Include the request cURL.</label>
+                        <textarea id="curl_request"></textarea>
+                    </div>
+                </div>
+            `;
+        } else if (assistance === 'dashboard') {
+            additionalFormHTML = `
+                <div class="form-group">
+                    <label>Which solution? (engage, recommend, find)</label>
+                    <input type="text" id="solution" required>
+                </div>
+                <div class="form-group">
+                    <label>Which rule is not working?</label>
+                    <input type="text" id="rule_issue" required>
+                </div>
+                <div class="form-group">
+                    <label>Which product/banners should return? (Product ID, Content ID or link)</label>
+                    <input type="text" id="expected_return" required>
+                </div>
+                <div class="form-group">
+                    <label>Which channel should appear?</label>
+                    <input type="text" id="channel">
+                </div>
+                <div class="form-group">
+                    <label>Additional information you would like to add?</label>
+                    <textarea id="additional_info"></textarea>
+                </div>
+            `;
         }
+        document.getElementById('additionalForm').innerHTML = additionalFormHTML;
+        document.getElementById('additionalForm').style.display = 'block';
+    }
 
-        function showNextForm() {
-            const necessidade = document.getElementById("necessidade").value;
-            document.getElementById("formProducao").classList.add("hidden");
-            document.getElementById("formDashboard").classList.add("hidden");
+    function submitForm(event) {
+        event.preventDefault();
+        const data = {
+            ...formData,
+            tool: document.getElementById('tool') ? document.getElementById('tool').value : '',
+            solution_issue: document.getElementById('solution_issue') ? document.getElementById('solution_issue').value : '',
+            example_request: document.getElementById('example_request') ? document.getElementById('example_request').value : '',
+            tracking_id: document.getElementById('tracking_id') ? document.getElementById('tracking_id').value : '',
+            curl_request: document.getElementById('curl_request') ? document.getElementById('curl_request').value : '',
+            solution: document.getElementById('solution') ? document.getElementById('solution').value : '',
+            rule_issue: document.getElementById('rule_issue') ? document.getElementById('rule_issue').value : '',
+            expected_return: document.getElementById('expected_return') ? document.getElementById('expected_return').value : '',
+            channel: document.getElementById('channel') ? document.getElementById('channel').value : '',
+            additional_info: document.getElementById('additional_info') ? document.getElementById('additional_info').value : ''
+        };
+        console.log(data); // Simulando o envio - trocar por lógica de e-mail ou integração backend
+        alert("Form data ready to be emailed to Paulo!");
+    }
+</script>
 
-            if (necessidade === "producao") {
-                document.getElementById("formProducao").classList.remove("hidden");
-            } else if (necessidade === "dashboard") {
-                document.getElementById("formDashboard").classList.remove("hidden");
-            }
-        }
-    </script>
 </body>
 </html>
