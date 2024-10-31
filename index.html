@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário Dinâmico</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f3f4f6;
+            color: #333;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Formulário de Solicitação</h2>
+        <div id="formStep1" class="form-step">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="site">Site:</label>
+                <input type="text" id="site" name="site" required>
+            </div>
+            <div class="form-group">
+                <label for="siteID">Site ID:</label>
+                <input type="text" id="siteID" name="siteID" required>
+            </div>
+            <button onclick="nextForm(2)">Próxima Página</button>
+        </div>
+
+        <div id="formStep2" class="form-step hidden">
+            <div class="form-group">
+                <label for="necessidade">O que você precisa?</label>
+                <select id="necessidade" name="necessidade" onchange="showNextForm()">
+                    <option value="">Selecione uma opção</option>
+                    <option value="producao">Ajuda com problema em ambiente de produção</option>
+                    <option value="dashboard">Ajuda com regras do dashboard</option>
+                    <option value="feature">Solicitação de nova Feature</option>
+                    <option value="acesso">Ajuda com acesso de usuário</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="formProducao" class="form-step hidden">
+            <div class="form-group">
+                <label for="ferramenta">Qual Ferramenta está apresentando problemas?</label>
+                <select id="ferramenta" name="ferramenta">
+                    <option value="streaming">Streaming API</option>
+                    <option value="find">Find</option>
+                    <option value="recsForPlacements">RecsForPlacements</option>
+                    <option value="engage">Engage</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="formDashboard" class="form-step hidden">
+            <div class="form-group">
+                <label for="solucao">Qual solução?</label>
+                <select id="solucao" name="solucao">
+                    <option value="engage">Engage</option>
+                    <option value="recommend">Recommend</option>
+                    <option value="find">Find</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="regra">Qual Regra que não está Funcionando?</label>
+                <input type="text" id="regra" name="regra">
+            </div>
+            <div class="form-group">
+                <label for="produtos">Qual/quais produtos/banners deveriam retornar (informe o product ID ou ContentID ou link):</label>
+                <input type="text" id="produtos" name="produtos">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function nextForm(step) {
+            document.getElementById("formStep1").classList.add("hidden");
+            document.getElementById("formStep" + step).classList.remove("hidden");
+        }
+
+        function showNextForm() {
+            const necessidade = document.getElementById("necessidade").value;
+            document.getElementById("formProducao").classList.add("hidden");
+            document.getElementById("formDashboard").classList.add("hidden");
+
+            if (necessidade === "producao") {
+                document.getElementById("formProducao").classList.remove("hidden");
+            } else if (necessidade === "dashboard") {
+                document.getElementById("formDashboard").classList.remove("hidden");
+            }
+        }
+    </script>
+</body>
+</html>
